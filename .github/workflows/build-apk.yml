@@ -24,10 +24,49 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      - name: Auto-create missing project files
+        run: |
+          mkdir -p www
+
+          if [ ! -f "www/index.html" ]; then
+            HTML_FILE=$(find . -maxdepth 3 -name "*.html" ! -path "./.git/*" | head -n 1)
+            if [ -n "$HTML_FILE" ]; then
+              cp "$HTML_FILE" www/index.html
+            else
+              echo "Error: Repository mein koi HTML file nahi mili!"
+              exit 1
+            fi
+          fi
+
+          if [ ! -f "package.json" ]; then
+            cat << 'EOF' > package.json
+          {
+            "name": "brajesh-smart-calculator",
+            "version": "1.0.0",
+            "private": true,
+            "devDependencies": {
+              "@capacitor/cli": "^6.0.0",
+              "@capacitor/core": "^6.0.0",
+              "@capacitor/android": "^6.0.0"
+            }
+          }
+          EOF
+          fi
+
+          if [ ! -f "capacitor.config.json" ]; then
+            cat << 'EOF' > capacitor.config.json
+          {
+            "appId": "com.brajesh.smartcalculator",
+            "appName": "BRAJESH SMART CALCULATOR",
+            "webDir": "www"
+          }
+          EOF
+          fi
+
       - name: Install Capacitor dependencies
         run: npm install
 
-      - name: Initialize Android project if missing
+      - name: Initialize Android project
         run: |
           if [ ! -d "android" ]; then
             npx cap add android
