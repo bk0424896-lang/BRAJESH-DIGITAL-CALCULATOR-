@@ -1,0 +1,101 @@
+<!doctype html><html lang="hi"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#102d50"><title>BRAJESH SMART CALCULATOR</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#edf2f8;font-family:Arial;color:#172337}
+header{background:#102d50;color:white;text-align:center;padding:19px}header h1{font-size:21px;margin:0}header p{font-size:12px;color:#c5d7eb;margin:6px 0 0}
+.wrap{max-width:560px;margin:auto;padding:13px}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:#dce5f0;padding:5px;border-radius:12px;margin-bottom:13px}
+.tabs button{border:0;padding:12px 4px;border-radius:9px;background:transparent;color:#29415e;font-weight:bold}.tabs button.active{background:#1769b5;color:white}
+.panel{background:white;border-radius:15px;padding:15px;margin-bottom:13px;box-shadow:0 3px 14px #0000000a}.hidden{display:none!important}
+h2{font-size:17px;color:#17395f;margin:0 0 13px}label{display:block;font-size:13px;color:#65748a;margin:12px 0 6px}
+input,select{width:100%;padding:12px;border:1px solid #d6dfeb;border-radius:9px;font-size:16px;background:white;color:#172337;min-width:0}
+button{cursor:pointer;touch-action:manipulation}.primary,.secondary,.danger{border:0;border-radius:9px;padding:12px 14px;font-weight:bold}
+.primary{background:#1769b5;color:white}.secondary{background:#e8eff7;color:#17395f}.danger{background:#fde9e9;color:#b42318}.full{width:100%;margin-top:13px}
+.display{height:105px;border:0!important;text-align:right;font-size:42px;padding:10px 4px;background:transparent}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.key{border:0;border-radius:50%;aspect-ratio:1;background:#e9eef5;font-size:22px;color:#172337}
+.key.op{background:#d8eaff;color:#1264b4}.key.orange{background:#1769b5;color:white}.key.clear{background:#fce8e8;color:#b42318}.key.zero{grid-column:span 2;aspect-ratio:auto;border-radius:40px;text-align:left;padding-left:27px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.ratebuttons{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.ratebuttons button{padding:11px 2px;border:1px solid #d4deea;border-radius:8px;background:white;font-weight:bold}.ratebuttons button.active{background:#1769b5;color:white;border-color:#1769b5}
+.result{background:#102d50;color:white;border-radius:12px;padding:15px;margin-top:13px}.line{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #ffffff25;font-size:14px}
+.total{color:#72e3a5;font-size:21px;font-weight:bold}.small{font-size:11px;color:#bdcde0;line-height:1.5}
+.itemrow{display:grid;grid-template-columns:1.5fr .65fr 1fr auto;gap:6px;align-items:center;margin:8px 0}.itemrow input{padding:9px;font-size:14px}.itemrow button{border:0;border-radius:8px;padding:10px;background:#fde9e9;color:#b42318}
+.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:9px 5px;border-bottom:1px solid #ffffff30;text-align:left}
+.historyrow{padding:11px 0;border-bottom:1px solid #e5eaf0;font-size:13px;display:flex;justify-content:space-between;gap:8px}
+footer{text-align:center;color:#8390a1;font-size:11px;padding:14px}
+@media(max-width:360px){.tabs button{font-size:11px}.itemrow{grid-template-columns:1.2fr .6fr .9fr auto}.itemrow input{font-size:12px;padding:8px}}
+@media print{body{background:white}.no-print,header,.tabs,footer{display:none!important}.wrap{max-width:none;padding:0}.panel{box-shadow:none;border:0;padding:0}}
+</style></head><body>
+<header><h1>BRAJESH SMART CALCULATOR</h1><p>Normal Calculator • GST • Shop Billing</p></header>
+<div class="wrap">
+<nav class="tabs no-print">
+<button class="active" id="tabNormal" onclick="showTab('normal')">🧮 Normal</button>
+<button id="tabGst" onclick="showTab('gst')">％ GST</button>
+<button id="tabBill" onclick="showTab('bill')">🧾 Bill</button>
+</nav>
+
+<section id="normalPanel" class="panel"><h2>Normal Calculator</h2>
+<input id="screen" class="display" value="0" readonly>
+<div class="keys">
+<button class="key clear" onclick="clearNormal()">AC</button><button class="key clear" onclick="deleteNormal()">DEL</button><button class="key op" onclick="normalPercent()">%</button><button class="key orange" onclick="normalAdd('/')">÷</button>
+<button class="key" onclick="normalAdd('7')">7</button><button class="key" onclick="normalAdd('8')">8</button><button class="key" onclick="normalAdd('9')">9</button><button class="key orange" onclick="normalAdd('*')">×</button>
+<button class="key" onclick="normalAdd('4')">4</button><button class="key" onclick="normalAdd('5')">5</button><button class="key" onclick="normalAdd('6')">6</button><button class="key orange" onclick="normalAdd('-')">−</button>
+<button class="key" onclick="normalAdd('1')">1</button><button class="key" onclick="normalAdd('2')">2</button><button class="key" onclick="normalAdd('3')">3</button><button class="key orange" onclick="normalAdd('+')">+</button>
+<button class="key zero" onclick="normalAdd('0')">0</button><button class="key" onclick="normalAdd('.')">.</button><button class="key orange" onclick="normalCalculate()">=</button>
+</div></section>
+
+<section id="gstPanel" class="panel hidden"><h2>GST Calculator</h2>
+<div class="grid2"><button id="gstAdd" class="primary" onclick="gstMode='add';paintGSTMode()">Add GST (+)</button><button id="gstRemove" class="secondary" onclick="gstMode='remove';paintGSTMode()">Remove GST (−)</button></div>
+<label>Amount (₹)</label><input id="gstAmount" type="number" min="0" step="0.01" placeholder="Amount enter karein">
+<label>GST Rate</label><div class="ratebuttons" id="gstRates">
+<button onclick="chooseRate(0,this)">0%</button><button onclick="chooseRate(5,this)">5%</button><button onclick="chooseRate(12,this)">12%</button><button class="active" onclick="chooseRate(18,this)">18%</button><button onclick="chooseRate(28,this)">28%</button></div>
+<label>Tax Type</label><div class="grid2"><button id="gstIntra" class="primary" onclick="taxType='intra';paintTaxType()">CGST + SGST</button><button id="gstInter" class="secondary" onclick="taxType='inter';paintTaxType()">IGST</button></div>
+<button class="primary full" onclick="calculateGST()">CALCULATE GST</button>
+<div class="result"><div class="line"><span>Taxable Amount</span><b id="gTaxable">₹0.00</b></div><div class="line"><span>CGST</span><b id="gCGST">₹0.00</b></div><div class="line"><span>SGST</span><b id="gSGST">₹0.00</b></div><div class="line"><span>IGST</span><b id="gIGST">₹0.00</b></div><div class="line"><span>Total GST</span><b id="gTotalTax">₹0.00</b></div><div class="line"><span>Final Amount</span><b class="total" id="gFinal">₹0.00</b></div><p class="small" id="gstNote">GST result yahan dikhega.</p></div></section>
+
+<section id="billPanel" class="panel hidden"><h2>Shop Bill / Invoice</h2>
+<label>Shop / Business Name</label><input id="shopName" placeholder="Aapki dukaan ka naam">
+<label>Customer Name (optional)</label><input id="customerName" placeholder="Customer ka naam">
+<label>Bill Number</label><input id="billNumber" placeholder="Jaise 001">
+<label>Items (Name, Quantity, Rate)</label><div id="items"></div>
+<button class="secondary full no-print" onclick="addItem()">＋ Add Item</button>
+<div class="grid2"><div><label>GST Rate</label><select id="billRate"><option value="0">0%</option><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div><div><label>Tax Type</label><select id="billTaxType"><option value="intra">CGST + SGST</option><option value="inter">IGST</option></select></div></div>
+<button class="primary full no-print" onclick="calculateBill()">CALCULATE BILL</button>
+<div class="result" id="billPrint"><h3 id="printShop">BRAJESH SMART CALCULATOR</h3><p class="small" id="printMeta">Invoice summary</p>
+<div class="tablewrap"><table><thead><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead><tbody id="billRows"></tbody></table></div>
+<div class="line"><span>Taxable Amount</span><b id="bTaxable">₹0.00</b></div><div class="line"><span>CGST</span><b id="bCGST">₹0.00</b></div><div class="line"><span>SGST</span><b id="bSGST">₹0.00</b></div><div class="line"><span>IGST</span><b id="bIGST">₹0.00</b></div><div class="line"><span>Total GST</span><b id="bGST">₹0.00</b></div><div class="line"><span>Grand Total</span><b class="total" id="bGrand">₹0.00</b></div>
+<p class="small">Calculation summary only. Applicable GST rate and invoice requirements must be verified before issuing a tax invoice.</p></div>
+<div class="grid2 no-print"><button class="secondary" onclick="window.print()">🖨 Print / Save PDF</button><button class="secondary" onclick="saveBill()">💾 Save Bill</button></div>
+</section>
+
+<section class="panel"><h2>Saved Bill History</h2><div id="history"><p style="color:#65748a;font-size:13px">Abhi koi saved bill nahi hai.</p></div><button class="danger no-print" onclick="clearHistory()">Clear History</button></section>
+<footer>Made with ♥ by Brajesh Kumar<br>BRAJESH SMART CALCULATOR</footer>
+</div>
+
+<script>
+function showTab(t){['normal','gst','bill'].forEach(x=>{document.getElementById(x+'Panel').classList.toggle('hidden',x!==t);document.getElementById('tab'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',x===t)})}
+let expr='',done=false,screen=document.getElementById('screen');
+function updateScreen(){screen.value=expr||'0'}
+function normalAdd(v){if(done){if(/[0-9.]/.test(v))expr='';done=false}if('+-*/'.includes(v)){if(!expr&&v!=='-')return;if(/[+\-*/]$/.test(expr))expr=expr.slice(0,-1)}if(v==='.'){let last=expr.split(/[+\-*/]/).pop();if(last.includes('.'))return;if(!last)expr+='0'}expr+=v;updateScreen()}
+function clearNormal(){expr='';done=false;updateScreen()}
+function deleteNormal(){expr=expr.slice(0,-1);done=false;updateScreen()}
+function normalPercent(){let m=expr.match(/(\d*\.?\d+)$/);if(m)expr=expr.slice(0,-m[0].length)+String(Number(m[0])/100);updateScreen()}
+function normalCalculate(){try{if(!expr||!/^[0-9+\-*/.() ]+$/.test(expr))return;let n=Function('"use strict";return ('+expr+')')();if(!Number.isFinite(n))throw Error();expr=String(Number(n.toPrecision(12)));done=true;updateScreen()}catch(e){screen.value='Error';expr='';done=true}}
+document.addEventListener('keydown',e=>{if(/[0-9.+\-*/]/.test(e.key)&&e.key.length===1)normalAdd(e.key);else if(e.key==='Enter'||e.key==='=')normalCalculate();else if(e.key==='Backspace')deleteNormal();else if(e.key==='Escape')clearNormal()});
+
+let gstMode='add',gstRate=18,taxType='intra';
+function paintGSTMode(){document.getElementById('gstAdd').className=gstMode==='add'?'primary':'secondary';document.getElementById('gstRemove').className=gstMode==='remove'?'primary':'secondary'}
+function paintTaxType(){document.getElementById('gstIntra').className=taxType==='intra'?'primary':'secondary';document.getElementById('gstInter').className=taxType==='inter'?'primary':'secondary'}
+function chooseRate(n,el){gstRate=n;document.querySelectorAll('#gstRates button').forEach(b=>b.classList.remove('active'));el.classList.add('active')}
+function money(n){return '₹'+Number(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function calculateGST(){let a=Number(document.getElementById('gstAmount').value);if(!Number.isFinite(a)||a<=0){alert('Sahi amount enter karein.');return}let taxable,gst,final;if(gstMode==='add'){taxable=a;gst=a*gstRate/100;final=a+gst}else{final=a;taxable=a/(1+gstRate/100);gst=final-taxable}let cg=taxType==='intra'?gst/2:0,sg=cg,ig=taxType==='inter'?gst:0;[['gTaxable',taxable],['gCGST',cg],['gSGST',sg],['gIGST',ig],['gTotalTax',gst],['gFinal',final]].forEach(([id,n])=>document.getElementById(id).textContent=money(n));document.getElementById('gstNote').textContent=(gstMode==='add'?'GST added':'GST removed')+' | '+gstRate+'% | '+(taxType==='intra'?'CGST + SGST':'IGST')}
+let lastBill=null;
+function addItem(name='',qty=1,price=''){let r=document.createElement('div');r.className='itemrow';r.innerHTML='<input class="iname" placeholder="Item name" value="'+attr(name)+'"><input class="iqty" type="number" min="0" step="1" value="'+qty+'"><input class="iprice" type="number" min="0" step="0.01" placeholder="Rate ₹" value="'+price+'"><button type="button">×</button>';r.querySelector('button').onclick=()=>r.remove();document.getElementById('items').appendChild(r)}
+function attr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+function safe(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+addItem();
+function calculateBill(){let items=[...document.querySelectorAll('#items .itemrow')].map(r=>{let qty=Number(r.querySelector('.iqty').value),price=Number(r.querySelector('.iprice').value);return{name:r.querySelector('.iname').value.trim()||'Item',qty,price,amount:qty*price}}).filter(x=>x.qty>0&&x.price>=0&&Number.isFinite(x.qty)&&Number.isFinite(x.price));if(!items.length){alert('Kam se kam ek item aur uski quantity/rate enter karein.');return}let taxable=items.reduce((s,x)=>s+x.amount,0),rate=Number(document.getElementById('billRate').value),gst=taxable*rate/100,kind=document.getElementById('billTaxType').value,cg=kind==='intra'?gst/2:0,sg=cg,ig=kind==='inter'?gst:0,grand=taxable+gst,shop=document.getElementById('shopName').value.trim()||'BRAJESH SMART CALCULATOR',customer=document.getElementById('customerName').value.trim(),number=document.getElementById('billNumber').value.trim()||String(Date.now()).slice(-6);document.getElementById('printShop').textContent=shop;document.getElementById('printMeta').textContent='Bill: '+number+' | Customer: '+(customer||'—')+' | Date: '+new Date().toLocaleDateString('en-IN')+' | GST '+rate+'%';document.getElementById('billRows').innerHTML=items.map(x=>'<tr><td>'+safe(x.name)+'</td><td>'+x.qty+'</td><td>'+money(x.price)+'</td><td>'+money(x.amount)+'</td></tr>').join('');[['bTaxable',taxable],['bCGST',cg],['bSGST',sg],['bIGST',ig],['bGST',gst],['bGrand',grand]].forEach(([id,n])=>document.getElementById(id).textContent=money(n));lastBill={shop,customer,number,date:new Date().toISOString(),items,rate,kind,taxable,cg,sg,ig,gst,grand}}
+function saveBill(){if(!lastBill){calculateBill();if(!lastBill)return}let list=[];try{list=JSON.parse(localStorage.getItem('brajeshBills')||'[]')}catch(e){}list.unshift(lastBill);list=list.slice(0,50);try{localStorage.setItem('brajeshBills',JSON.stringify(list));renderHistory();alert('Bill history mein save ho gaya.')}catch(e){alert('Storage error. Print/Save PDF use karein.')}}
+function renderHistory(){let list=[];try{list=JSON.parse(localStorage.getItem('brajeshBills')||'[]')}catch(e){}let el=document.getElementById('history');if(!list.length){el.innerHTML='<p style="color:#65748a;font-size:13px">Abhi koi saved bill nahi hai.</p>';return}el.innerHTML=list.map(b=>'<div class="historyrow"><span><b>'+safe(b.shop)+'</b><br>Bill '+safe(b.number)+' • '+new Date(b.date).toLocaleDateString('en-IN')+'</span><b>'+money(b.grand)+'</b></div>').join('')}
+function clearHistory(){if(confirm('Saari saved bill history delete karein?')){localStorage.removeItem('brajeshBills');renderHistory()}}
+renderHistory();paintGSTMode();paintTaxType();
+</script></body></html>
