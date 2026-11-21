@@ -1,9 +1,13 @@
-name: Build APK - BRAJESH SMART CALCULATOR
+name: Build APK - BK Smart Calculator
 
 on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
+
+env:
+  APP_NAME: "बीके स्मार्ट कैलकुलेटर"
+  APP_ID: "com.bk.smartcalculator"
 
 jobs:
   build-android-apk:
@@ -24,7 +28,7 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Auto-create missing project files
+      - name: Prepare project files
         run: |
           mkdir -p www
 
@@ -41,7 +45,7 @@ jobs:
           if [ ! -f "package.json" ]; then
             cat << 'EOF' > package.json
           {
-            "name": "brajesh-smart-calculator",
+            "name": "bk-smart-calculator",
             "version": "1.0.0",
             "private": true,
             "devDependencies": {
@@ -53,15 +57,13 @@ jobs:
           EOF
           fi
 
-          if [ ! -f "capacitor.config.json" ]; then
-            cat << 'EOF' > capacitor.config.json
+          cat << EOF > capacitor.config.json
           {
-            "appId": "com.brajesh.smartcalculator",
-            "appName": "BRAJESH SMART CALCULATOR",
+            "appId": "${APP_ID}",
+            "appName": "${APP_NAME}",
             "webDir": "www"
           }
           EOF
-          fi
 
       - name: Install Capacitor dependencies
         run: npm install
@@ -84,6 +86,6 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: brajesh-smart-calculator-apk
+          name: bk-smart-calculator-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           
